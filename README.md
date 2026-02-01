@@ -63,23 +63,23 @@ nano config.env  # Edit with your node IPs and settings
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Network Architecture                          │
+│                    Network Architecture                         │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  Management Network (vmbr0): 10.11.11.0/24                       │
-│  ├── Proxmox cluster communication                               │
-│  ├── SSH access                                                   │
-│  └── Web UI access                                                │
-│                                                                   │
-│  VM Network (vmbr1): 10.1.1.0/24                                 │
-│  ├── Virtual machine traffic                                      │
-│  └── Backup cluster communication                                 │
-│                                                                   │
-│  TB4 Mesh Network (en05/en06): 10.100.0.0/24                     │
-│  ├── Ceph cluster_network (OSD replication)                      │
-│  ├── High-speed, low-latency                                      │
-│  └── 65520 MTU jumbo frames                                       │
-│                                                                   │
+│                                                                 │
+│  Management Network (vmbr0): 10.11.11.0/24                      │
+│  ├── Proxmox cluster communication                              │
+│  ├── SSH access                                                 │
+│  └── Web UI access                                              │
+│                                                                 │
+│  VM Network (vmbr1): 10.1.1.0/24                                │
+│  ├── Virtual machine traffic                                    │
+│  └── Backup cluster communication                               │
+│                                                                 │
+│  TB4 Mesh Network (en05/en06): 10.100.0.0/24                    │
+│  ├── Ceph cluster_network (OSD replication)                     │
+│  ├── High-speed, low-latency                                    │
+│  └── 65520 MTU jumbo frames                                     │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 
 Physical TB4 Mesh Topology (Ring):
