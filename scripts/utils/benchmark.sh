@@ -9,7 +9,7 @@ print_header "Performance Benchmark"
 
 load_config
 
-nodes=($(get_node_ips))
+read -ra nodes <<< "$(get_node_ips)"
 
 # Find a node to run tests from
 TEST_NODE=""

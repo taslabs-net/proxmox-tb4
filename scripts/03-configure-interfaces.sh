@@ -9,8 +9,8 @@ print_header "TB4 Interface Configuration"
 
 load_config
 
-nodes=($(get_node_ips))
-names=($NODE1_NAME $NODE2_NAME $NODE3_NAME)
+read -ra nodes <<< "$(get_node_ips)"
+read -ra names <<< "$NODE1_NAME $NODE2_NAME $NODE3_NAME"
 
 # Build node-specific configs
 declare -A node_en05_ip
@@ -118,8 +118,6 @@ log_step "Step 5: Verify Configuration"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    expected_en05="${node_en05_ip[$node]}"
-    expected_en06="${node_en06_ip[$node]}"
     
     echo ""
     log_info "=== $name ($node) ==="

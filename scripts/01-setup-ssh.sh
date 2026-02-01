@@ -52,8 +52,8 @@ log_info "Public key: ${PUB_KEY:0:50}..."
 
 log_step "Step 2: Accept Host Keys"
 
-nodes=($(get_node_ips))
-names=($NODE1_NAME $NODE2_NAME $NODE3_NAME)
+read -ra nodes <<< "$(get_node_ips)"
+read -ra names <<< "$NODE1_NAME $NODE2_NAME $NODE3_NAME"
 
 log_info "You may need to type 'yes' to accept each host key."
 log_info "You may also need to enter the root password for each node."
