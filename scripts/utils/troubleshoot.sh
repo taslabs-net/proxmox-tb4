@@ -9,8 +9,8 @@ print_header "Diagnostics"
 
 load_config
 
-nodes=($(get_node_ips))
-names=($NODE1_NAME $NODE2_NAME $NODE3_NAME)
+read -ra nodes <<< "$(get_node_ips)"
+read -ra names <<< "$NODE1_NAME $NODE2_NAME $NODE3_NAME"
 
 echo "Gathering diagnostic information..."
 echo "=================================="

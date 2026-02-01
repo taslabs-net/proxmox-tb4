@@ -34,10 +34,12 @@ log_step() {
 
 # Load configuration
 load_config() {
-    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local config_file="${script_dir}/../../config.env"
     
     if [[ -f "$config_file" ]]; then
+        # shellcheck source=/dev/null
         source "$config_file"
         log_success "Loaded configuration from config.env"
     else
@@ -66,7 +68,8 @@ check_ssh() {
 # Run command on all nodes
 run_on_all_nodes() {
     local cmd="$1"
-    local nodes=($(get_node_ips))
+    local nodes
+    read -ra nodes <<< "$(get_node_ips)"
     
     for node in "${nodes[@]}"; do
         log_info "Running on $node..."
@@ -137,7 +140,8 @@ maybe_run() {
 backup_file() {
     local node="$1"
     local file="$2"
-    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+    local backup
+    backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
     
     run_on_node "$node" "cp '$file' '$backup' 2>/dev/null || true"
     log_info "Backed up $file to $backup"
