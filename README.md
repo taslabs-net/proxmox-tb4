@@ -203,6 +203,9 @@ GPL-3.0 License - See [LICENSE](LICENSE) for details.
 
 Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+## Animated Visual
+https://flarelylegal.com/docs/proxmox/tb4-ceph-cluster/
+
 ---
 
 **Questions?** Open an issue or check the [Troubleshooting Guide](docs/08-troubleshooting.md).
