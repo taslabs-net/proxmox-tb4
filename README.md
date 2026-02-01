@@ -173,7 +173,7 @@ Thanks to everyone who helped refine this guide through testing and feedback:
 
 - **@Allistah** - Ceph network bottleneck discovery, /32 addressing scheme
 - **@aelhusseiniakl** - [GUI-focused alternative guide](https://gist.github.com/aelhusseiniakl/39e3fd9f29abda6153a3b5a0a5bc191b)
-- **@Yearly1825** - Improved boot ordering fix, cold boot module loading
+- **@Yearly1825** - Comprehensive boot fix script (udev + systemd ordering), cold boot module loading fix, PVE 9.1.4 testing
 - **@ikiji-ns** - /31 addressing documentation
 - **@pSyCr0**, **@scloder** - Testing and troubleshooting feedback
 
