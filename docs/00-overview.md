@@ -20,8 +20,8 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Your Home/Lab Network                       │
-│                         (Router/Switch)                          │
+│                      Your Home/Lab Network                      │
+│                         (Router/Switch)                         │
 └─────────────────────────────┬───────────────────────────────────┘
                               │
         ┌─────────────────────┼─────────────────────┐
@@ -39,8 +39,8 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
            │                  │                 │
            ▼                  ▼                 ▼
       ┌─────────────────────────────────────────────┐
-      │           TB4 Mesh (Ring Topology)           │
-      │         Ceph Cluster Network Traffic         │
+      │           TB4 Mesh (Ring Topology)          │
+      │         Ceph Cluster Network Traffic        │
       └─────────────────────────────────────────────┘
 ```
 
