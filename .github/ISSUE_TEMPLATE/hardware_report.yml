@@ -1,0 +1,85 @@
+name: Hardware Compatibility Report
+description: Share your hardware setup and test results
+title: "[Hardware]: "
+labels: ["hardware", "documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing your hardware experience! This helps others who might have similar setups.
+
+  - type: input
+    id: hardware-model
+    attributes:
+      label: Hardware Model
+      description: What hardware are you using?
+      placeholder: e.g., Minisforum MS-01, Intel NUC 13 Pro, Dell OptiPlex
+    validations:
+      required: true
+
+  - type: textarea
+    id: tb4-info
+    attributes:
+      label: Thunderbolt 4 Controller Info
+      description: Output of `lspci | grep -i thunderbolt`
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: pci-paths
+    attributes:
+      label: PCI Paths
+      description: |
+        What PCI paths did you use in your systemd link files?
+        You can find these with `udevadm info -e | grep -A 20 thunderbolt`
+      placeholder: |
+        pci-0000:00:0d.2 -> en05
+        pci-0000:00:0d.3 -> en06
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      description: Did everything work?
+      options:
+        - Working perfectly
+        - Working with modifications
+        - Partially working
+        - Not working
+    validations:
+      required: true
+
+  - type: textarea
+    id: modifications
+    attributes:
+      label: Modifications Required
+      description: Did you need to change anything from the standard guide?
+    validations:
+      required: false
+
+  - type: textarea
+    id: benchmarks
+    attributes:
+      label: Performance Results
+      description: |
+        If you ran benchmarks, please share the results:
+        - TB4 latency (ping between nodes)
+        - Ceph write throughput
+        - Ceph read throughput
+      placeholder: |
+        Latency: ~0.6ms
+        Write: 1,300 MB/s
+        Read: 1,700 MB/s
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Anything else to share about your setup?
+    validations:
+      required: false

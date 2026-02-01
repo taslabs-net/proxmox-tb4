@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/taslabs-net/proxmox-tb4#documentation
+    about: Browse the documentation before opening an issue.
+  - name: Troubleshooting Guide
+    url: https://github.com/taslabs-net/proxmox-tb4/blob/main/docs/08-troubleshooting.md
+    about: Check the troubleshooting guide for common issues.

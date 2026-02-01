@@ -1,0 +1,78 @@
+# Network Interface Configuration Template
+# Add this content to /etc/network/interfaces on each node
+#
+# IMPORTANT: Add BEFORE the "source /etc/network/interfaces.d/*" line
+#            to prevent conflicts with SDN configuration
+
+# ==============================================================================
+# TB4 Interface Declarations (prevents GUI editing)
+# ==============================================================================
+iface en05 inet manual #do not edit in GUI
+iface en06 inet manual #do not edit in GUI
+
+# ==============================================================================
+# Node 1 (n2) Configuration
+# ==============================================================================
+# Uncomment and adjust for Node 1:
+#
+# auto en05
+# iface en05 inet static
+#     address 10.100.0.2/30
+#     mtu 65520
+#
+# auto en06
+# iface en06 inet static
+#     address 10.100.0.5/30
+#     mtu 65520
+
+# ==============================================================================
+# Node 2 (n3) Configuration
+# ==============================================================================
+# Uncomment and adjust for Node 2:
+#
+# auto en05
+# iface en05 inet static
+#     address 10.100.0.6/30
+#     mtu 65520
+#
+# auto en06
+# iface en06 inet static
+#     address 10.100.0.9/30
+#     mtu 65520
+
+# ==============================================================================
+# Node 3 (n4) Configuration
+# ==============================================================================
+# Uncomment and adjust for Node 3:
+#
+# auto en05
+# iface en05 inet static
+#     address 10.100.0.10/30
+#     mtu 65520
+#
+# auto en06
+# iface en06 inet static
+#     address 10.100.0.14/30
+#     mtu 65520
+
+# ==============================================================================
+# IP Addressing Reference
+# ==============================================================================
+# Point-to-Point Links (/30 subnets):
+#
+# Link 1: N1-N2 (via en05)
+#   - N1: 10.100.0.1/30
+#   - N2: 10.100.0.2/30
+#
+# Link 2: N1-N3 (via en06)  
+#   - N1: 10.100.0.5/30
+#   - N3: 10.100.0.6/30
+#
+# Link 3: N2-N3 (via en06)
+#   - N2: 10.100.0.9/30
+#   - N3: 10.100.0.10/30
+#
+# Router IDs (for OpenFabric):
+#   - N1: 10.100.0.12
+#   - N2: 10.100.0.13
+#   - N3: 10.100.0.14

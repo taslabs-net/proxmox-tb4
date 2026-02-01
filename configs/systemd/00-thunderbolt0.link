@@ -1,0 +1,17 @@
+# Thunderbolt 4 Interface Renaming - Port 1
+# Copy to: /etc/systemd/network/00-thunderbolt0.link
+#
+# IMPORTANT: Adjust the Path= to match your hardware
+# Find your PCI path with: lspci | grep -i thunderbolt
+# Or: udevadm info -e | grep -A 20 thunderbolt
+
+[Match]
+# Adjust this path for your hardware
+Path=pci-0000:00:0d.2
+Driver=thunderbolt-net
+
+[Link]
+# Disable MAC address randomization
+MACAddressPolicy=none
+# Rename to consistent name
+Name=en05

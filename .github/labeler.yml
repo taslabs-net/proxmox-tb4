@@ -1,0 +1,24 @@
+# Label PRs based on file paths
+# Used by the labeler workflow
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "*.md"
+
+scripts:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "scripts/**"
+
+configuration:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "configs/**"
+          - "config.env.example"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"

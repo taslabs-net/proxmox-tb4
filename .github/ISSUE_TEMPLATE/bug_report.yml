@@ -1,0 +1,74 @@
+name: Bug Report
+description: Report an issue with scripts or documentation
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the form below.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: What part of the project is affected?
+      options:
+        - Scripts (automation)
+        - Documentation
+        - Configuration templates
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected to happen instead.
+      placeholder: Tell us what went wrong...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Run script '...'
+        2. See error '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide details about your setup
+      value: |
+        - Proxmox VE Version: 
+        - Hardware (e.g., MS-01, NUC 13): 
+        - TB4 Controller (from `lspci | grep -i thunderbolt`): 
+        - Number of nodes: 
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Paste any error messages or relevant log output
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic Output
+      description: |
+        If possible, run `./scripts/utils/troubleshoot.sh` and paste the output here
+      render: shell
+    validations:
+      required: false

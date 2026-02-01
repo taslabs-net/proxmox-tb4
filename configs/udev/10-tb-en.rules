@@ -1,0 +1,11 @@
+# Thunderbolt 4 Interface Hotplug Rules
+# Copy to: /etc/udev/rules.d/10-tb-en.rules
+#
+# These rules trigger interface bringup scripts when TB4 cables are connected
+# After copying, reload with: udevadm control --reload-rules
+
+# Trigger when interface is renamed to en05
+ACTION=="move", SUBSYSTEM=="net", KERNEL=="en05", RUN+="/usr/local/bin/pve-en05.sh"
+
+# Trigger when interface is renamed to en06
+ACTION=="move", SUBSYSTEM=="net", KERNEL=="en06", RUN+="/usr/local/bin/pve-en06.sh"

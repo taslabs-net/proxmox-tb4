@@ -1,0 +1,18 @@
+# Thunderbolt Interface Boot Service
+# Copy to: /etc/systemd/system/thunderbolt-interfaces.service
+#
+# Ensures TB4 interfaces come up at boot even if udev rules fail
+# Enable with: systemctl enable thunderbolt-interfaces.service
+
+[Unit]
+Description=Configure Thunderbolt Network Interfaces
+After=network.target thunderbolt.service
+Wants=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/thunderbolt-startup.sh
+
+[Install]
+WantedBy=multi-user.target
