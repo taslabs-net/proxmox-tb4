@@ -26,13 +26,13 @@ Each OSD can use more RAM for caching:
 
 ```bash
 # 12GB per OSD (recommended for 64GB nodes with 2 OSDs = 24GB for Ceph)
-ssh n2 "ceph config set osd osd_memory_target 12884901888"
+ssh n1 "ceph config set osd osd_memory_target 12884901888"
 
 # Minimum cache before eviction
-ssh n2 "ceph config set osd osd_memory_cache_min 1073741824"  # 1GB
+ssh n1 "ceph config set osd osd_memory_cache_min 1073741824"  # 1GB
 
 # Cache resize interval
-ssh n2 "ceph config set osd osd_memory_cache_resize_interval 1"
+ssh n1 "ceph config set osd osd_memory_cache_resize_interval 1"
 ```
 
 **Adjust based on your RAM:**
@@ -46,7 +46,7 @@ ssh n2 "ceph config set osd osd_memory_cache_resize_interval 1"
 
 ```bash
 # 4GB cache for SSDs/NVMe
-ssh n2 "ceph config set osd bluestore_cache_size_ssd 4294967296"
+ssh n1 "ceph config set osd bluestore_cache_size_ssd 4294967296"
 ```
 
 ## CPU Optimizations
@@ -55,15 +55,15 @@ ssh n2 "ceph config set osd bluestore_cache_size_ssd 4294967296"
 
 ```bash
 # Operation shards and threads
-ssh n2 "ceph config set osd osd_op_num_shards 8"
-ssh n2 "ceph config set osd osd_op_num_threads_per_shard 2"
+ssh n1 "ceph config set osd osd_op_num_shards 8"
+ssh n1 "ceph config set osd osd_op_num_threads_per_shard 2"
 
 # Async messaging threads
-ssh n2 "ceph config set global ms_async_op_threads 8"
+ssh n1 "ceph config set global ms_async_op_threads 8"
 
 # Client message handling
-ssh n2 "ceph config set osd osd_client_message_cap 1000"
-ssh n2 "ceph config set osd osd_client_message_size_cap 1073741824"
+ssh n1 "ceph config set osd osd_client_message_cap 1000"
+ssh n1 "ceph config set osd osd_client_message_size_cap 1073741824"
 ```
 
 ## Network Optimizations
@@ -72,19 +72,19 @@ ssh n2 "ceph config set osd osd_client_message_size_cap 1073741824"
 
 ```bash
 # Disable Nagle's algorithm for low latency
-ssh n2 "ceph config set global ms_tcp_nodelay true"
+ssh n1 "ceph config set global ms_tcp_nodelay true"
 
 # Large receive buffer
-ssh n2 "ceph config set global ms_tcp_rcvbuf 134217728"  # 128MB
+ssh n1 "ceph config set global ms_tcp_rcvbuf 134217728"  # 128MB
 
 # Prefetch optimization
-ssh n2 "ceph config set global ms_tcp_prefetch_max_size 65536"
+ssh n1 "ceph config set global ms_tcp_prefetch_max_size 65536"
 
 # CRC mode for cluster (faster than secure)
-ssh n2 "ceph config set global ms_cluster_mode crc"
+ssh n1 "ceph config set global ms_cluster_mode crc"
 
 # Dispatch throttling
-ssh n2 "ceph config set global ms_dispatch_throttle_bytes 1073741824"
+ssh n1 "ceph config set global ms_dispatch_throttle_bytes 1073741824"
 ```
 
 ### Heartbeat Tuning
@@ -93,10 +93,10 @@ For fast, reliable networks:
 
 ```bash
 # Heartbeat interval (seconds)
-ssh n2 "ceph config set osd osd_heartbeat_interval 6"
+ssh n1 "ceph config set osd osd_heartbeat_interval 6"
 
 # Grace period before marking OSD down
-ssh n2 "ceph config set osd osd_heartbeat_grace 20"
+ssh n1 "ceph config set osd osd_heartbeat_grace 20"
 ```
 
 ## BlueStore Optimizations
@@ -107,27 +107,27 @@ LZ4 compression improves effective throughput:
 
 ```bash
 # Use LZ4 (fast)
-ssh n2 "ceph config set osd bluestore_compression_algorithm lz4"
+ssh n1 "ceph config set osd bluestore_compression_algorithm lz4"
 
 # Compress aggressively
-ssh n2 "ceph config set osd bluestore_compression_mode aggressive"
+ssh n1 "ceph config set osd bluestore_compression_mode aggressive"
 
 # Only store if 30%+ smaller
-ssh n2 "ceph config set osd bluestore_compression_required_ratio 0.7"
+ssh n1 "ceph config set osd bluestore_compression_required_ratio 0.7"
 ```
 
 ### NVMe-Specific Settings
 
 ```bash
 # Disable sync on commit (NVMe has capacitors)
-ssh n2 "ceph config set osd bluestore_sync_submit_transaction false"
+ssh n1 "ceph config set osd bluestore_sync_submit_transaction false"
 
 # Throttling for high-speed storage
-ssh n2 "ceph config set osd bluestore_throttle_bytes 268435456"
-ssh n2 "ceph config set osd bluestore_throttle_deferred_bytes 134217728"
+ssh n1 "ceph config set osd bluestore_throttle_bytes 268435456"
+ssh n1 "ceph config set osd bluestore_throttle_deferred_bytes 134217728"
 
 # Cache trim interval
-ssh n2 "ceph config set osd bluestore_cache_trim_interval 200"
+ssh n1 "ceph config set osd bluestore_cache_trim_interval 200"
 ```
 
 ### DB and WAL Sizing
@@ -136,10 +136,10 @@ If using separate DB/WAL devices:
 
 ```bash
 # 5GB for DB
-ssh n2 "ceph config set osd bluestore_block_db_size 5368709120"
+ssh n1 "ceph config set osd bluestore_block_db_size 5368709120"
 
 # 1GB for WAL
-ssh n2 "ceph config set osd bluestore_block_wal_size 1073741824"
+ssh n1 "ceph config set osd bluestore_block_wal_size 1073741824"
 ```
 
 ## Scrubbing and Maintenance
@@ -148,16 +148,16 @@ ssh n2 "ceph config set osd bluestore_block_wal_size 1073741824"
 
 ```bash
 # Only scrub 2 AM - 6 AM
-ssh n2 "ceph config set osd osd_scrub_begin_hour 2"
-ssh n2 "ceph config set osd osd_scrub_end_hour 6"
+ssh n1 "ceph config set osd osd_scrub_begin_hour 2"
+ssh n1 "ceph config set osd osd_scrub_end_hour 6"
 
 # Don't scrub during recovery
-ssh n2 "ceph config set osd osd_scrub_during_recovery false"
+ssh n1 "ceph config set osd osd_scrub_during_recovery false"
 
 # Deep scrub every 2 weeks
-ssh n2 "ceph config set osd osd_deep_scrub_interval 1209600"
-ssh n2 "ceph config set osd osd_scrub_max_interval 1209600"
-ssh n2 "ceph config set osd osd_scrub_min_interval 86400"
+ssh n1 "ceph config set osd osd_deep_scrub_interval 1209600"
+ssh n1 "ceph config set osd osd_scrub_max_interval 1209600"
+ssh n1 "ceph config set osd osd_scrub_min_interval 86400"
 ```
 
 ### Recovery Settings
@@ -166,11 +166,11 @@ Optimize for TB4's high bandwidth:
 
 ```bash
 # More concurrent recovery operations
-ssh n2 "ceph config set osd osd_recovery_max_active 8"
-ssh n2 "ceph config set osd osd_max_backfills 4"
+ssh n1 "ceph config set osd osd_recovery_max_active 8"
+ssh n1 "ceph config set osd osd_max_backfills 4"
 
 # Low priority (don't impact client I/O)
-ssh n2 "ceph config set osd osd_recovery_op_priority 1"
+ssh n1 "ceph config set osd osd_recovery_op_priority 1"
 ```
 
 ## OS-Level Tuning
@@ -180,7 +180,7 @@ ssh n2 "ceph config set osd osd_recovery_op_priority 1"
 Apply to all nodes:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "cat >> /etc/sysctl.conf << 'EOF'
 # Network buffer sizes
 net.core.rmem_max = 268435456
@@ -198,7 +198,7 @@ done
 ### NVMe Queue Depth
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "echo 1024 > /sys/block/nvme1n1/queue/nr_requests"
 done
 ```
@@ -211,23 +211,23 @@ Make persistent via udev rule if needed.
 
 ```bash
 # View all non-default settings
-ssh n2 "ceph config dump"
+ssh n1 "ceph config dump"
 
 # Check specific setting
-ssh n2 "ceph config get osd osd_memory_target"
+ssh n1 "ceph config get osd osd_memory_target"
 ```
 
 ### Monitor Performance
 
 ```bash
 # Real-time OSD performance
-ssh n2 "ceph osd perf"
+ssh n1 "ceph osd perf"
 
 # Pool I/O stats
-ssh n2 "ceph osd pool stats cephtb4"
+ssh n1 "ceph osd pool stats cephtb4"
 
 # Detailed stats
-ssh n2 "ceph -s"
+ssh n1 "ceph -s"
 ```
 
 ## Quick Reference

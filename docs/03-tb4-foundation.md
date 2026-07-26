@@ -41,7 +41,7 @@ The Linux kernel needs two modules for TB4 networking:
 
 ```bash
 # Using node names from SSH config
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Loading TB4 modules on $node ==="
     
     # Add to /etc/modules for persistence
@@ -64,14 +64,15 @@ done
 **Verify modules loaded:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== TB4 modules on $node ==="
     ssh $node "lsmod | grep thunderbolt"
 done
 ```
 
 **Expected output:**
-```text=== TB4 modules on n2 ===
+```text
+=== TB4 modules on n1 ===
 thunderbolt_net        28672  0
 thunderbolt           212992  1 thunderbolt_net
 ```
@@ -81,7 +82,7 @@ thunderbolt           212992  1 thunderbolt_net
 Find your TB4 controllers and their PCI paths:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== TB4 hardware on $node ==="
     ssh $node "lspci | grep -i thunderbolt"
     echo ""
@@ -90,7 +91,8 @@ done
 ```
 
 **Expected output (Intel 13th Gen example):**
-```text=== TB4 hardware on n2 ===
+```text
+=== TB4 hardware on n1 ===
 00:0d.0 USB controller: Intel Corporation Device 7a60
 00:0d.2 USB controller: Intel Corporation Device 7a62
 00:0d.3 USB controller: Intel Corporation Device 7a63
@@ -103,7 +105,7 @@ done
 Before renaming, see what Linux calls your TB4 interfaces:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Network interfaces on $node ==="
     ssh $node "ip link show | grep -E '^[0-9]+: (en|eth|thunderbolt)'"
 done
@@ -121,7 +123,7 @@ Systemd link files rename interfaces based on PCI path. This ensures consistent 
 **Create on all nodes:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Creating link files on $node ==="
     
     # First TB4 port -> en05
@@ -155,7 +157,7 @@ done
 The link files require systemd-networkd:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "systemctl enable systemd-networkd"
     ssh $node "systemctl start systemd-networkd"
 done
@@ -166,7 +168,7 @@ done
 Apply the changes to the boot image:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Updating initramfs on $node ==="
     ssh $node "update-initramfs -u -k all"
 done
@@ -178,7 +180,7 @@ Reboot to apply all changes:
 
 ```bash
 echo "Rebooting all nodes..."
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "reboot" &
 done
 
@@ -191,14 +193,15 @@ sleep 90
 After reboot, verify the interfaces are named correctly:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Interfaces on $node ==="
     ssh $node "ip link show | grep -E '(en05|en06)'"
 done
 ```
 
 **Expected output:**
-```text=== Interfaces on n2 ===
+```text
+=== Interfaces on n1 ===
 11: en05: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
 12: en06: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
 ```
@@ -213,17 +216,17 @@ If interfaces still have old names:
 
 1. **Check PCI paths match:**
    ```bash
-   ssh n2 "udevadm info -e | grep -A 10 thunderbolt"
+   ssh n1 "udevadm info -e | grep -A 10 thunderbolt"
    ```
 
 2. **Check link file syntax:**
    ```bash
-   ssh n2 "cat /etc/systemd/network/00-thunderbolt0.link"
+   ssh n1 "cat /etc/systemd/network/00-thunderbolt0.link"
    ```
 
 3. **Force udev to reprocess:**
    ```bash
-   ssh n2 "udevadm control --reload-rules && udevadm trigger"
+   ssh n1 "udevadm control --reload-rules && udevadm trigger"
    ```
 
 ### Modules Not Loading
@@ -232,12 +235,12 @@ If `lsmod | grep thunderbolt` shows nothing:
 
 1. **Check kernel support:**
    ```bash
-   ssh n2 "modinfo thunderbolt"
+   ssh n1 "modinfo thunderbolt"
    ```
 
 2. **Check for errors:**
    ```bash
-   ssh n2 "dmesg | grep -i thunderbolt"
+   ssh n1 "dmesg | grep -i thunderbolt"
    ```
 
 3. **BIOS setting:** Ensure TB4 is enabled in BIOS/UEFI
@@ -250,7 +253,7 @@ If you see only 1 interface (or none):
 
 2. **Check both ports:**
    ```bash
-   ssh n2 "ls /sys/class/net/"
+   ssh n1 "ls /sys/class/net/"
    ```
 
 3. **Try unplugging and replugging cables**

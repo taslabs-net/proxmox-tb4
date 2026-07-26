@@ -46,9 +46,9 @@ The first time you SSH to a server, you must accept its host key. Do this for ea
 
 ```bash
 # Replace with your actual IPs from config.env
-ssh root@10.11.11.12 "echo 'Host key accepted for N2'"
-ssh root@10.11.11.13 "echo 'Host key accepted for N3'"
-ssh root@10.11.11.14 "echo 'Host key accepted for N4'"
+ssh root@10.11.11.12 "echo 'Host key accepted for n1'"
+ssh root@10.11.11.13 "echo 'Host key accepted for n2'"
+ssh root@10.11.11.14 "echo 'Host key accepted for n3'"
 ```
 
 Type `yes` when prompted for each node.
@@ -77,9 +77,10 @@ ssh root@10.11.11.14 "hostname"
 ```
 
 Expected output:
-```textn2
+```text
+n1
+n2
 n3
-n4
 ```
 
 ## SSH Config (Optional but Recommended)
@@ -90,17 +91,17 @@ Create `~/.ssh/config` for easier access:
 cat >> ~/.ssh/config << 'EOF'
 
 # Proxmox TB4 Cluster
-Host n2
+Host n1
     HostName 10.11.11.12
     User root
     IdentityFile ~/.ssh/id_ed25519
 
-Host n3
+Host n2
     HostName 10.11.11.13
     User root
     IdentityFile ~/.ssh/id_ed25519
 
-Host n4
+Host n3
     HostName 10.11.11.14
     User root
     IdentityFile ~/.ssh/id_ed25519
@@ -111,9 +112,9 @@ chmod 600 ~/.ssh/config
 
 Now you can simply run:
 ```bash
+ssh n1
 ssh n2
 ssh n3
-ssh n4
 ```
 
 ## Testing Loop Access
@@ -121,21 +122,22 @@ ssh n4
 Verify you can reach all nodes with a loop:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== Testing $node ==="
     ssh $node "hostname && uptime"
 done
 ```
 
 Expected output:
-```text=== Testing n2 ===
-n2
+```text
+=== Testing n1 ===
+n1
  10:30:45 up 5 days, ...
+=== Testing n2 ===
+n2
+ 10:30:46 up 5 days, ...
 === Testing n3 ===
 n3
- 10:30:46 up 5 days, ...
-=== Testing n4 ===
-n4
  10:30:47 up 5 days, ...
 ```
 

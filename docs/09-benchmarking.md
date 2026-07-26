@@ -166,7 +166,7 @@ rm -f /root/test*.fio
 ### TB4 Latency
 
 ```bash
-# From n2, test latency to other nodes
+# From n1, test latency to other nodes
 for ip in 10.100.0.12 10.100.0.13 10.100.0.14; do
     echo "=== Latency to $ip ==="
     ping -c 10 -i 0.2 $ip | tail -1
@@ -182,12 +182,12 @@ Install iperf3:
 apt install iperf3
 ```
 
-**On n3 (server):**
+**On n2 (server):**
 ```bash
 iperf3 -s -B 10.100.0.13
 ```
 
-**On n2 (client):**
+**On n1 (client):**
 ```bash
 iperf3 -c 10.100.0.13 -B 10.100.0.12 -t 30
 ```
@@ -220,7 +220,7 @@ ceph osd perf
 ### Watch Network Traffic
 
 ```bash
-# On n2
+# On n1
 iftop -i en05
 ```
 
