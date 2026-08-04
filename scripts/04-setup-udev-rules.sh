@@ -21,16 +21,16 @@ if confirm "Create udev rules on all nodes?"; then
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Creating udev rules on $name..."
-        
+
         ssh "root@$node" 'cat > /etc/udev/rules.d/10-tb-en.rules << '\''EOF'\''
 # TB4 interface hotplug rules
 # Trigger bringup scripts when interfaces are renamed
 ACTION=="move", SUBSYSTEM=="net", KERNEL=="en05", RUN+="/usr/local/bin/pve-en05.sh"
 ACTION=="move", SUBSYSTEM=="net", KERNEL=="en06", RUN+="/usr/local/bin/pve-en06.sh"
 EOF'
-        
+
         log_success "$name: Udev rules created"
     done
 fi
@@ -41,9 +41,9 @@ if confirm "Create bringup scripts on all nodes?"; then
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Creating scripts on $name..."
-        
+
         # en05 script
         ssh "root@$node" 'cat > /usr/local/bin/pve-en05.sh << '\''EOF'\''
 #!/bin/bash
@@ -61,7 +61,7 @@ for i in {1..5}; do
 done
 EOF'
         ssh "root@$node" "chmod +x /usr/local/bin/pve-en05.sh"
-        
+
         # en06 script
         ssh "root@$node" 'cat > /usr/local/bin/pve-en06.sh << '\''EOF'\''
 #!/bin/bash
@@ -79,7 +79,7 @@ for i in {1..5}; do
 done
 EOF'
         ssh "root@$node" "chmod +x /usr/local/bin/pve-en06.sh"
-        
+
         log_success "$name: Scripts created"
     done
 fi
@@ -93,9 +93,9 @@ if confirm "Create systemd service on all nodes?"; then
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Creating systemd service on $name..."
-        
+
         # Service file
         ssh "root@$node" 'cat > /etc/systemd/system/thunderbolt-interfaces.service << '\''EOF'\''
 [Unit]
@@ -111,7 +111,7 @@ ExecStart=/usr/local/bin/thunderbolt-startup.sh
 [Install]
 WantedBy=multi-user.target
 EOF'
-        
+
         # Startup script
         ssh "root@$node" 'cat > /usr/local/bin/thunderbolt-startup.sh << '\''EOF'\''
 #!/bin/bash
@@ -143,11 +143,11 @@ fi
 echo "$(date): Thunderbolt configuration completed" >> "$LOGFILE"
 EOF'
         ssh "root@$node" "chmod +x /usr/local/bin/thunderbolt-startup.sh"
-        
+
         # Enable service
         ssh "root@$node" "systemctl daemon-reload"
         ssh "root@$node" "systemctl enable thunderbolt-interfaces.service"
-        
+
         log_success "$name: Systemd service created and enabled"
     done
 fi
@@ -157,7 +157,7 @@ log_step "Step 4: Reload Udev Rules"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     ssh "root@$node" "udevadm control --reload-rules"
     log_success "$name: Udev rules reloaded"
 done
@@ -167,10 +167,10 @@ log_step "Step 5: Verify Installation"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo ""
     log_info "=== $name ($node) ==="
-    
+
     # Check files exist
     echo -n "  Udev rules: "
     if ssh "root@$node" "test -f /etc/udev/rules.d/10-tb-en.rules"; then
@@ -178,28 +178,28 @@ for i in "${!nodes[@]}"; do
     else
         echo -e "${RED}MISSING${NC}"
     fi
-    
+
     echo -n "  pve-en05.sh: "
     if ssh "root@$node" "test -x /usr/local/bin/pve-en05.sh"; then
         echo -e "${GREEN}OK${NC}"
     else
         echo -e "${RED}MISSING${NC}"
     fi
-    
+
     echo -n "  pve-en06.sh: "
     if ssh "root@$node" "test -x /usr/local/bin/pve-en06.sh"; then
         echo -e "${GREEN}OK${NC}"
     else
         echo -e "${RED}MISSING${NC}"
     fi
-    
+
     echo -n "  thunderbolt-startup.sh: "
     if ssh "root@$node" "test -x /usr/local/bin/thunderbolt-startup.sh"; then
         echo -e "${GREEN}OK${NC}"
     else
         echo -e "${RED}MISSING${NC}"
     fi
-    
+
     echo -n "  Systemd service: "
     if ssh "root@$node" "systemctl is-enabled thunderbolt-interfaces.service >/dev/null 2>&1"; then
         echo -e "${GREEN}ENABLED${NC}"

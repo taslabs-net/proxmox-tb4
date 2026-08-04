@@ -9,7 +9,7 @@ echo "$(date): Starting Thunderbolt interface configuration" >> "$LOGFILE"
 
 # Wait up to 30 seconds for interfaces to appear
 for i in {1..30}; do
-    if ip link show en05 &>/dev/null && ip link show en06 &>/dev/null; then
+    if ip link show en05 &> /dev/null && ip link show en06 &> /dev/null; then
         echo "$(date): Thunderbolt interfaces found" >> "$LOGFILE"
         break
     fi
@@ -18,12 +18,12 @@ for i in {1..30}; do
 done
 
 # Configure interfaces if they exist
-if ip link show en05 &>/dev/null; then
+if ip link show en05 &> /dev/null; then
     /usr/local/bin/pve-en05.sh
     echo "$(date): en05 configured" >> "$LOGFILE"
 fi
 
-if ip link show en06 &>/dev/null; then
+if ip link show en06 &> /dev/null; then
     /usr/local/bin/pve-en06.sh
     echo "$(date): en06 configured" >> "$LOGFILE"
 fi

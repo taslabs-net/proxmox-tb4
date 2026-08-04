@@ -17,17 +17,17 @@ log_step "Step 1: Load TB4 Kernel Modules"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     log_info "Configuring $name ($node)..."
-    
+
     # Add to /etc/modules for persistence
     ssh "root@$node" "grep -q '^thunderbolt$' /etc/modules 2>/dev/null || echo 'thunderbolt' >> /etc/modules"
     ssh "root@$node" "grep -q '^thunderbolt-net$' /etc/modules 2>/dev/null || echo 'thunderbolt-net' >> /etc/modules"
-    
+
     # Load modules now
     ssh "root@$node" "modprobe thunderbolt 2>/dev/null || true"
     ssh "root@$node" "modprobe thunderbolt-net 2>/dev/null || true"
-    
+
     log_success "$name: Modules configured"
 done
 
@@ -36,7 +36,7 @@ log_step "Step 2: Verify Modules Loaded"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo ""
     log_info "=== $name ($node) ==="
     ssh "root@$node" "lsmod | grep thunderbolt || echo 'No thunderbolt modules loaded'"
@@ -51,9 +51,9 @@ if confirm "Create systemd link files on all nodes?"; then
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Creating link files on $name..."
-        
+
         # First TB4 port -> en05
         ssh "root@$node" "cat > /etc/systemd/network/00-thunderbolt0.link << 'EOF'
 [Match]
@@ -75,7 +75,7 @@ Driver=thunderbolt-net
 MACAddressPolicy=none
 Name=${TB4_IFACE2}
 EOF"
-        
+
         log_success "$name: Link files created"
     done
 fi
@@ -85,10 +85,10 @@ log_step "Step 4: Enable systemd-networkd"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     ssh "root@$node" "systemctl enable systemd-networkd 2>/dev/null"
     ssh "root@$node" "systemctl start systemd-networkd 2>/dev/null || true"
-    
+
     log_success "$name: systemd-networkd enabled"
 done
 
@@ -98,7 +98,7 @@ if confirm "Update initramfs on all nodes? (required for changes to take effect)
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Updating initramfs on $name (this may take a minute)..."
         ssh "root@$node" "update-initramfs -u -k all"
         log_success "$name: Initramfs updated"
@@ -113,30 +113,30 @@ echo ""
 
 if confirm "Reboot all nodes now?"; then
     log_info "Rebooting nodes..."
-    
+
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
         ssh "root@$node" "reboot" &
     done
-    
+
     echo ""
     log_info "Waiting 90 seconds for nodes to reboot..."
     sleep 90
-    
+
     # Verify nodes are back
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
         wait_for_node "$node" 120
     done
-    
+
     log_step "Verifying Interface Names After Reboot"
-    
+
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         echo ""
         log_info "=== $name ==="
         ssh "root@$node" "ip link show | grep -E '(${TB4_IFACE1}|${TB4_IFACE2})' || echo 'TB4 interfaces not found (cables connected?)'"
