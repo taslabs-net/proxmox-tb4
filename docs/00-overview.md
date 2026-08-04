@@ -18,8 +18,7 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
 
 ### Three Networks, Three Purposes
 
-```
-┌─────────────────────────────────────────────────────────────────┐
+```text┌─────────────────────────────────────────────────────────────────┐
 │                      Your Home/Lab Network                      │
 │                         (Router/Switch)                         │
 └─────────────────────────────┬───────────────────────────────────┘
@@ -90,8 +89,7 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
 
 With 3 nodes and 2 TB4 ports each, you create a **ring topology**:
 
-```
-         Node 1 (N2)
+```text         Node 1 (N2)
          en05   en06
           │       │
           │       │

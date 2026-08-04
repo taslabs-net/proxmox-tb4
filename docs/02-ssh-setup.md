@@ -77,8 +77,7 @@ ssh root@10.11.11.14 "hostname"
 ```
 
 Expected output:
-```
-n2
+```textn2
 n3
 n4
 ```
@@ -129,8 +128,7 @@ done
 ```
 
 Expected output:
-```
-=== Testing n2 ===
+```text=== Testing n2 ===
 n2
  10:30:45 up 5 days, ...
 === Testing n3 ===

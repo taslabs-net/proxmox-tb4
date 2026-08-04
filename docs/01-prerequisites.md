@@ -110,8 +110,7 @@ Each TB4 cable gets a /30 subnet:
 
 Connect TB4 cables in a ring:
 
-```
-1. N2 port 1 (en05) → N3 port 1 (en05)
+```text1. N2 port 1 (en05) → N3 port 1 (en05)
 2. N3 port 2 (en06) → N4 port 1 (en05)
 3. N4 port 2 (en06) → N2 port 2 (en06)
 ```

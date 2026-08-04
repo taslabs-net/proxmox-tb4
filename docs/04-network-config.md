@@ -282,8 +282,7 @@ done
 ```
 
 **Expected output:**
-```
-=== n2 interfaces ===
+```text=== n2 interfaces ===
 11: en05: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UP
     inet 10.100.0.2/30 scope global en05
 12: en06: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UP

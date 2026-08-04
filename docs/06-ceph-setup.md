@@ -80,8 +80,7 @@ ssh n2 "ceph -s"
 ```
 
 Expected output:
-```
-cluster:
+```textcluster:
   id:     xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   health: HEALTH_OK
 
@@ -191,8 +190,7 @@ ssh n2 "ceph osd tree"
 ```
 
 Expected output:
-```
-ID  CLASS  WEIGHT   TYPE NAME      STATUS  REWEIGHT  PRI-AFF
+```textID  CLASS  WEIGHT   TYPE NAME      STATUS  REWEIGHT  PRI-AFF
 -1         5.45776  root default                              
 -3         1.81959      host n2                               
  0    ssd  0.90979          osd.0      up   1.00000  1.00000
@@ -233,8 +231,7 @@ ssh n2 "ceph -s"
 ```
 
 Expected:
-```
-cluster:
+```textcluster:
   id:     xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   health: HEALTH_OK
 

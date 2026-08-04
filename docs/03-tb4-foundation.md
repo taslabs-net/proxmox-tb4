@@ -71,8 +71,7 @@ done
 ```
 
 **Expected output:**
-```
-=== TB4 modules on n2 ===
+```text=== TB4 modules on n2 ===
 thunderbolt_net        28672  0
 thunderbolt           212992  1 thunderbolt_net
 ```
@@ -91,8 +90,7 @@ done
 ```
 
 **Expected output (Intel 13th Gen example):**
-```
-=== TB4 hardware on n2 ===
+```text=== TB4 hardware on n2 ===
 00:0d.0 USB controller: Intel Corporation Device 7a60
 00:0d.2 USB controller: Intel Corporation Device 7a62
 00:0d.3 USB controller: Intel Corporation Device 7a63
@@ -200,8 +198,7 @@ done
 ```
 
 **Expected output:**
-```
-=== Interfaces on n2 ===
+```text=== Interfaces on n2 ===
 11: en05: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
 12: en06: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
 ```

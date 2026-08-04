@@ -40,8 +40,7 @@ rados -p cephtb4 cleanup
 ```
 
 **Interpreting results:**
-```
-Total time run:         10.02 sec
+```textTotal time run:         10.02 sec
 Total writes made:      332
 Write size:             4194304    # 4MB blocks
 Object size:            4194304

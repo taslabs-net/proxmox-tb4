@@ -97,8 +97,7 @@ done
 ```
 
 Expected:
-```
-=== FRR on n2 ===
+```text=== FRR on n2 ===
      Active: active (running) since ...
 ```
 
@@ -148,8 +147,7 @@ done
 ```
 
 **Expected:**
-```
-=== Ping 10.100.0.12 ===
+```text=== Ping 10.100.0.12 ===
 64 bytes from 10.100.0.12: icmp_seq=1 ttl=64 time=0.618 ms
 64 bytes from 10.100.0.12: icmp_seq=2 ttl=64 time=0.582 ms
 ```
@@ -188,8 +186,7 @@ ssh n2 "ip route add 10.100.0.14/32 via 10.100.0.6 dev en06"  # to n4
 
 Add to `/etc/network/interfaces`:
 
-```
-up ip route add 10.100.0.13/32 via 10.100.0.1 dev en05
+```textup ip route add 10.100.0.13/32 via 10.100.0.1 dev en05
 up ip route add 10.100.0.14/32 via 10.100.0.6 dev en06
 ```
 
