@@ -72,7 +72,7 @@ Create the initial monitor on n1:
 **CLI Method:**
 ```bash
 ssh n1 "pveceph init"
-ssh n1 "pveceph mon create --mon-address 10.100.0.13"
+ssh n1 "pveceph mon create --mon-address 10.100.0.12"
 ```
 
 **Verify:**

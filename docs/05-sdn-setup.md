@@ -29,7 +29,7 @@ Before starting:
 - TB4 interfaces configured and UP (from previous section)
 - Nodes can ping each other over point-to-point links
 - You have access to Proxmox web UI
-- There exists a Promxmox Cluster with all nodes added. You can use the vmbr0 interface for cluster communication, while the TB4 mesh will be used for Ceph traffic.
+- There exists a Proxmox Cluster with all nodes added. You can use the vmbr0 interface for cluster communication, while the TB4 mesh will be used for Ceph traffic.
 
 ## GUI Configuration
 
