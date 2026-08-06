@@ -26,18 +26,18 @@ Using /30 subnets for point-to-point links:
 
 | Link | Node A | IP | Node B | IP |
 |------|--------|-----|--------|-----|
-| Link 1 | N2 en05 | 10.100.0.2/30 | N3 en05 | 10.100.0.1/30 |
-| Link 2 | N2 en06 | 10.100.0.5/30 | N4 en05 | 10.100.0.6/30 |
-| Link 3 | N3 en06 | 10.100.0.9/30 | N4 en06 | 10.100.0.10/30 |
+| Link 1 | n1 en05 | 10.100.0.2/30 | n2 en05 | 10.100.0.1/30 |
+| Link 2 | n1 en06 | 10.100.0.5/30 | n3 en05 | 10.100.0.6/30 |
+| Link 3 | n2 en06 | 10.100.0.9/30 | n3 en06 | 10.100.0.10/30 |
 
 ### Step 2: Configure /etc/network/interfaces
 
 **Critical:** TB4 interfaces MUST be defined BEFORE the `source /etc/network/interfaces.d/*` line to avoid SDN conflicts.
 
-**On Node 1 (n2):**
+**On Node 1 (n1):**
 
 ```bash
-ssh n2 "cat >> /etc/network/interfaces << 'EOF'
+ssh n1 "cat >> /etc/network/interfaces << 'EOF'
 
 # TB4 Interfaces - DO NOT EDIT IN GUI
 iface en05 inet manual #do not edit in GUI
@@ -56,10 +56,10 @@ iface en06 inet static
 EOF"
 ```
 
-**On Node 2 (n3):**
+**On Node 2 (n2):**
 
 ```bash
-ssh n3 "cat >> /etc/network/interfaces << 'EOF'
+ssh n2 "cat >> /etc/network/interfaces << 'EOF'
 
 # TB4 Interfaces - DO NOT EDIT IN GUI
 iface en05 inet manual #do not edit in GUI
@@ -78,10 +78,10 @@ iface en06 inet static
 EOF"
 ```
 
-**On Node 3 (n4):**
+**On Node 3 (n3):**
 
 ```bash
-ssh n4 "cat >> /etc/network/interfaces << 'EOF'
+ssh n3 "cat >> /etc/network/interfaces << 'EOF'
 
 # TB4 Interfaces - DO NOT EDIT IN GUI
 iface en05 inet manual #do not edit in GUI
@@ -107,7 +107,7 @@ EOF"
 Udev rules trigger scripts when TB4 cables are connected:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "cat > /etc/udev/rules.d/10-tb-en.rules << 'EOF'
 # TB4 interface hotplug rules
 ACTION==\"move\", SUBSYSTEM==\"net\", KERNEL==\"en05\", RUN+=\"/usr/local/bin/pve-en05.sh\"
@@ -123,7 +123,7 @@ These scripts bring up interfaces with correct settings:
 **en05 script:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node 'cat > /usr/local/bin/pve-en05.sh << '\''EOF'\''
 #!/bin/bash
 LOGFILE="/tmp/udev-debug.log"
@@ -146,7 +146,7 @@ done
 **en06 script:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node 'cat > /usr/local/bin/pve-en06.sh << '\''EOF'\''
 #!/bin/bash
 LOGFILE="/tmp/udev-debug.log"
@@ -173,7 +173,7 @@ Ensure interfaces come up even if udev rules fail:
 **Create service file:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "cat > /etc/systemd/system/thunderbolt-interfaces.service << 'EOF'
 [Unit]
 Description=Configure Thunderbolt Network Interfaces
@@ -194,7 +194,7 @@ done
 **Create startup script:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node 'cat > /usr/local/bin/thunderbolt-startup.sh << '\''EOF'\''
 #!/bin/bash
 LOGFILE="/var/log/thunderbolt-startup.log"
@@ -231,7 +231,7 @@ done
 **Enable the service:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "systemctl daemon-reload"
     ssh $node "systemctl enable thunderbolt-interfaces.service"
 done
@@ -244,7 +244,7 @@ done
 Required for systemd `.link` files to work (interface renaming to en05/en06):
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "systemctl enable systemd-networkd && systemctl start systemd-networkd"
 done
 ```
@@ -254,7 +254,7 @@ done
 Required for OpenFabric routing:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "grep -q 'net.ipv4.ip_forward=1' /etc/sysctl.conf || echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf"
     ssh $node "sysctl -p"
 done
@@ -265,7 +265,7 @@ done
 Reload network settings:
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "ifreload -a"
 done
 ```
@@ -275,14 +275,15 @@ done
 **Check interface status:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== $node interfaces ==="
     ssh $node "ip addr show en05 en06"
 done
 ```
 
 **Expected output:**
-```text=== n2 interfaces ===
+```text
+=== n1 interfaces ===
 11: en05: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UP
     inet 10.100.0.2/30 scope global en05
 12: en06: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UP
@@ -292,9 +293,9 @@ done
 **Test point-to-point connectivity:**
 
 ```bash
-# From n2, ping the other end of each link
-ssh n2 "ping -c 2 10.100.0.1"  # n3 via en05
-ssh n2 "ping -c 2 10.100.0.6"  # n4 via en06
+# From n1, ping the other end of each link
+ssh n1 "ping -c 2 10.100.0.1"  # n2 via en05
+ssh n1 "ping -c 2 10.100.0.6"  # n3 via en06
 ```
 
 ## Troubleshooting
@@ -303,21 +304,21 @@ ssh n2 "ping -c 2 10.100.0.6"  # n4 via en06
 
 ```bash
 # Manually bring up
-ssh n2 "ip link set en05 up mtu 65520"
-ssh n2 "ip link set en06 up mtu 65520"
+ssh n1 "ip link set en05 up mtu 65520"
+ssh n1 "ip link set en06 up mtu 65520"
 
 # Check cable connection
-ssh n2 "ethtool en05"
+ssh n1 "ethtool en05"
 ```
 
 ### No IP Address Assigned
 
 ```bash
 # Check interfaces file
-ssh n2 "grep -A5 'en05' /etc/network/interfaces"
+ssh n1 "grep -A5 'en05' /etc/network/interfaces"
 
 # Manually apply
-ssh n2 "ifup en05"
+ssh n1 "ifup en05"
 ```
 
 ### Ping Fails

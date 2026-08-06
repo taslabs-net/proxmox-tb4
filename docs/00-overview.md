@@ -18,30 +18,7 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
 
 ### Three Networks, Three Purposes
 
-```text┌─────────────────────────────────────────────────────────────────┐
-│                      Your Home/Lab Network                      │
-│                         (Router/Switch)                         │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-        ▼                     ▼                     ▼
-   ┌─────────┐           ┌─────────┐           ┌─────────┐
-   │  Node 1 │           │  Node 2 │           │  Node 3 │
-   │  (N2)   │           │  (N3)   │           │  (N4)   │
-   └────┬────┘           └────┬────┘           └────┬────┘
-        │                     │                     │
-        │    TB4 Cables       │                     │
-        │  ┌──────────────────┼─────────────────┐   │
-        │  │                  │                 │   │
-        └──┼──────────────────┼─────────────────┼───┘
-           │                  │                 │
-           ▼                  ▼                 ▼
-      ┌─────────────────────────────────────────────┐
-      │           TB4 Mesh (Ring Topology)          │
-      │         Ceph Cluster Network Traffic        │
-      └─────────────────────────────────────────────┘
-```
+![Network Overview](img/architecture-overview.drawio.svg)
 
 ### Network 1: Management Network (vmbr0)
 
@@ -89,14 +66,15 @@ Traditional Ceph clusters require expensive 10GbE or 25GbE networking for the "c
 
 With 3 nodes and 2 TB4 ports each, you create a **ring topology**:
 
-```text         Node 1 (N2)
+```text
+         Node 1 (N1)
          en05   en06
           │       │
           │       │
      ┌────┘       └────┐
      │                 │
      ▼                 ▼
-   Node 2 (N3)     Node 3 (N4)
+   Node 2 (N2)     Node 3 (N3)
    en05   en06     en05   en06
      │       │       │       │
      │       └───────┘       │
@@ -106,9 +84,9 @@ With 3 nodes and 2 TB4 ports each, you create a **ring topology**:
 ```
 
 Every node can reach every other node with **at most 1 hop**:
-- N2 → N3: Direct via en05
-- N2 → N4: Direct via en06
-- N3 → N4: Direct via en06
+- N1 → N2: Direct via en05
+- N1 → N3: Direct via en06
+- N2 → N3: Direct via en06
 
 ### Point-to-Point Addressing
 
@@ -116,9 +94,9 @@ Each TB4 link gets its own /30 subnet (4 IPs, 2 usable):
 
 | Link | Subnet | Node A IP | Node B IP |
 |------|--------|-----------|-----------|
-| N2-N3 (en05) | 10.100.0.0/30 | 10.100.0.1 | 10.100.0.2 |
-| N2-N4 (en06) | 10.100.0.4/30 | 10.100.0.5 | 10.100.0.6 |
-| N3-N4 (en06) | 10.100.0.8/30 | 10.100.0.9 | 10.100.0.10 |
+| N1-N2 (en05) | 10.100.0.0/30 | 10.100.0.1 | 10.100.0.2 |
+| N1-N3 (en06) | 10.100.0.4/30 | 10.100.0.5 | 10.100.0.6 |
+| N2-N3 (en06) | 10.100.0.8/30 | 10.100.0.9 | 10.100.0.10 |
 
 ## Why OpenFabric/SDN?
 

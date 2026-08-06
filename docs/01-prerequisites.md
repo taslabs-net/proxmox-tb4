@@ -28,9 +28,9 @@ Before starting, ensure you have all hardware and software requirements ready.
 - Active cables for longer runs
 
 **You need 3 cables** for a ring topology:
-- N2 ↔ N3
-- N3 ↔ N4  
-- N4 ↔ N2
+- N1 ↔ N2
+- N2 ↔ N3  
+- N3 ↔ N1
 
 ### Network Switch
 
@@ -110,9 +110,10 @@ Each TB4 cable gets a /30 subnet:
 
 Connect TB4 cables in a ring:
 
-```text1. N2 port 1 (en05) → N3 port 1 (en05)
-2. N3 port 2 (en06) → N4 port 1 (en05)
-3. N4 port 2 (en06) → N2 port 2 (en06)
+```text
+1. N1 port 1 (en05) → N2 port 1 (en05)
+2. N2 port 2 (en06) → N3 port 1 (en05)
+3. N3 port 2 (en06) → N1 port 2 (en06)
 ```
 
 **Tips:**

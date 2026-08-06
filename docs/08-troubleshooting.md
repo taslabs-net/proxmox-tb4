@@ -35,7 +35,7 @@ systemctl status thunderbolt-interfaces.service
 
 1. **Manual bringup:**
    ```bash
-   for node in n2 n3 n4; do
+   for node in n1 n2 n3; do
        ssh $node "ip link set en05 up mtu 65520"
        ssh $node "ip link set en06 up mtu 65520"
        ssh $node "ifreload -a"
@@ -66,7 +66,7 @@ systemctl status thunderbolt-interfaces.service
 
 **Fix:**
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "sed -i '1s/#\\\\!/#!/' /usr/local/bin/thunderbolt-startup.sh"
     ssh $node "sed -i '1s/#\\\\!/#!/' /usr/local/bin/pve-en05.sh"
     ssh $node "sed -i '1s/#\\\\!/#!/' /usr/local/bin/pve-en06.sh"
@@ -85,7 +85,7 @@ done
 
 **Fix:** Force modules to load at boot:
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "cat > /etc/modules-load.d/thunderbolt.conf << 'EOF'
 thunderbolt
 thunderbolt_net
@@ -141,9 +141,9 @@ systemctl enable thunderbolt-network.service
 **Diagnosis:**
 ```bash
 # Test each link
-ssh n2 "ping -c 2 10.100.0.1"   # to n3 via en05
-ssh n2 "ping -c 2 10.100.0.6"   # to n4 via en06
-ssh n3 "ping -c 2 10.100.0.10"  # to n4 via en06
+ssh n1 "ping -c 2 10.100.0.1"   # to n2 via en05
+ssh n1 "ping -c 2 10.100.0.6"   # to n3 via en06
+ssh n2 "ping -c 2 10.100.0.10"  # to n3 via en06
 ```
 
 **Common causes:**
@@ -299,7 +299,7 @@ ceph quorum_status
 **Fix:**
 ```bash
 # Restart monitors
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "systemctl restart ceph-mon.target"
 done
 ```
