@@ -11,7 +11,7 @@ iface en05 inet manual #do not edit in GUI
 iface en06 inet manual #do not edit in GUI
 
 # ==============================================================================
-# Node 1 (n2) Configuration
+# Node 1 (n1) Configuration
 # ==============================================================================
 # Uncomment and adjust for Node 1:
 #
@@ -26,7 +26,7 @@ iface en06 inet manual #do not edit in GUI
 #     mtu 65520
 
 # ==============================================================================
-# Node 2 (n3) Configuration
+# Node 2 (n2) Configuration
 # ==============================================================================
 # Uncomment and adjust for Node 2:
 #
@@ -41,7 +41,7 @@ iface en06 inet manual #do not edit in GUI
 #     mtu 65520
 
 # ==============================================================================
-# Node 3 (n4) Configuration
+# Node 3 (n3) Configuration
 # ==============================================================================
 # Uncomment and adjust for Node 3:
 #
