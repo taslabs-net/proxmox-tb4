@@ -28,4 +28,13 @@ if ip link show en06 &> /dev/null; then
     echo "$(date): en06 configured" >> "$LOGFILE"
 fi
 
+# Reload interface configuration
+echo "$(date): Reloading interface configuration" >> "$LOGFILE"
+if ifreload -a &> /dev/null; then
+		echo "$(date): Interface configuration reloaded successfully" >> "$LOGFILE"
+else
+		echo "$(date): Failed to reload interface configuration" >> "$LOGFILE"
+		exit 1
+fi
+
 echo "$(date): Thunderbolt configuration completed" >> "$LOGFILE"
