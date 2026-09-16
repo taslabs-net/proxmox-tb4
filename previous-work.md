@@ -1238,7 +1238,7 @@ commented
 on Nov 20, 2025
 @Allistah i ran some for you today
 
-i stood up a standard debian13 lxc, you could use helper scripts and it works fine, but give it a decent drive. i did 25g which was fine becuse i also turned it into my database server for later. I gave it .5/24 for testing grab fio apt-get install fio
+i stood up a standard debian13 lxc, you could use helper scripts and it works fine, but give it a decent drive. i did 25g which was fine because i also turned it into my database server for later. I gave it .5/24 for testing grab fio apt-get install fio
 
 and then i ran:
 
@@ -1306,7 +1306,7 @@ commented
 on Nov 20, 2025
 @Allistah i ran some for you today
 
-i stood up a standard debian13 lxc, you could use helper scripts and it works fine, but give it a decent drive. i did 25g which was fine becuse i also turned it into my database server for later. I gave it .5/24 for testing grab fio apt-get install fio
+i stood up a standard debian13 lxc, you could use helper scripts and it works fine, but give it a decent drive. i did 25g which was fine because i also turned it into my database server for later. I gave it .5/24 for testing grab fio apt-get install fio
 
 Nice! See my previous post - I figured out why I was capped at ~175 MB/s. I had the Ceph Public and Ceph Cluster network set wrong. Once I changed the Ceph Public network over to the Thunderbolt network, I started getting 1.3 GB/s throughput on writes. Also now that you've given me some benchmark lines, I'll run some of those and see what results I get now that things are fixed. I'll get back with some results - tomorrow probably.
 
@@ -1348,7 +1348,7 @@ pSyCr0
 commented
 on Nov 21, 2025
 • 
-Strange interface error which I have now... Yesterday I had only ipv4 ip adresses on the en05/06 and now only ipv6. What has now to be written in den interface config. In the first part of the config is described that I need to set ipv4 adresses on each en05/06 interface and on the second part nothing about that. Mine looks like this on the second node:
+Strange interface error which I have now... Yesterday I had only ipv4 ip addresses on the en05/06 and now only ipv6. What has now to be written in den interface config. In the first part of the config is described that I need to set ipv4 addresses on each en05/06 interface and on the second part nothing about that. Mine looks like this on the second node:
 
 `auto lo
 iface lo inet loopback

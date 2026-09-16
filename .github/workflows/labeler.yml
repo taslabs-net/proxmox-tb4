@@ -1,7 +1,10 @@
 name: Labeler
 
+# pull_request_target so PRs from forks get a write-scoped token.
+# No checkout: labeler reads the config from the base ref via the API,
+# so untrusted fork code is never run with the elevated token.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -12,9 +15,6 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
       - name: Label PR
         uses: actions/labeler@v6
         with:

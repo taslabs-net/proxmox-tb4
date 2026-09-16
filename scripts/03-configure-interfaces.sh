@@ -28,7 +28,7 @@ log_step "Step 1: Check Current Interface State"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo ""
     log_info "=== $name ($node) ==="
     ssh "root@$node" "ip link show ${TB4_IFACE1} 2>/dev/null || echo '${TB4_IFACE1} not found'"
@@ -48,20 +48,20 @@ if confirm "Add TB4 interface configuration to all nodes?"; then
         name="${names[$i]}"
         en05_ip="${node_en05_ip[$node]}"
         en06_ip="${node_en06_ip[$node]}"
-        
+
         log_info "Configuring $name ($node)..."
         log_info "  ${TB4_IFACE1}: $en05_ip"
         log_info "  ${TB4_IFACE2}: $en06_ip"
-        
+
         # Backup existing config
         backup_file "$node" "/etc/network/interfaces"
-        
+
         # Check if already configured
         if ssh "root@$node" "grep -q '${TB4_IFACE1} inet static' /etc/network/interfaces 2>/dev/null"; then
             log_warn "$name: TB4 interfaces already configured, skipping"
             continue
         fi
-        
+
         # Add configuration
         ssh "root@$node" "cat >> /etc/network/interfaces << 'EOF'
 
@@ -80,7 +80,7 @@ iface ${TB4_IFACE2} inet static
     address ${en06_ip}
     mtu ${TB4_MTU}
 EOF"
-        
+
         log_success "$name: Configuration added"
     done
 fi
@@ -92,10 +92,10 @@ log_info "Required for OpenFabric routing"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     ssh "root@$node" "grep -q 'net.ipv4.ip_forward=1' /etc/sysctl.conf || echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf"
     ssh "root@$node" "sysctl -w net.ipv4.ip_forward=1 >/dev/null"
-    
+
     log_success "$name: IPv4 forwarding enabled"
 done
 
@@ -105,10 +105,10 @@ if confirm "Apply network configuration now?"; then
     for i in "${!nodes[@]}"; do
         node="${nodes[$i]}"
         name="${names[$i]}"
-        
+
         log_info "Applying configuration on $name..."
         ssh "root@$node" "ifreload -a 2>/dev/null || ifdown ${TB4_IFACE1} ${TB4_IFACE2} 2>/dev/null; ifup ${TB4_IFACE1} ${TB4_IFACE2} 2>/dev/null || true"
-        
+
         log_success "$name: Configuration applied"
     done
 fi
@@ -118,10 +118,10 @@ log_step "Step 5: Verify Configuration"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo ""
     log_info "=== $name ($node) ==="
-    
+
     # Check en05
     if ssh "root@$node" "ip addr show ${TB4_IFACE1} 2>/dev/null | grep -q inet"; then
         ssh "root@$node" "ip addr show ${TB4_IFACE1} | grep -E '(inet |mtu )'"
@@ -129,7 +129,7 @@ for i in "${!nodes[@]}"; do
     else
         log_warn "${TB4_IFACE1}: No IP address (cable connected?)"
     fi
-    
+
     # Check en06
     if ssh "root@$node" "ip addr show ${TB4_IFACE2} 2>/dev/null | grep -q inet"; then
         ssh "root@$node" "ip addr show ${TB4_IFACE2} | grep -E '(inet |mtu )'"

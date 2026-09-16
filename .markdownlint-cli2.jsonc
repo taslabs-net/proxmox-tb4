@@ -1,0 +1,18 @@
+{
+  "config": {
+    // Prose in this guide is intentionally long-form and table-heavy.
+    "MD013": false, // line-length
+    "MD060": false, // table-column-style
+    "MD026": false, // trailing punctuation in headings ("Step 1:")
+    "MD024": false, // duplicate headings (repeated "Verify:" sections)
+    "MD041": false, // first line must be a heading
+    "MD033": false, // inline HTML
+    // Cosmetic blank-line rules: high churn, no readability gain.
+    "MD022": false, // blanks around headings
+    "MD031": false, // blanks around fences
+    "MD032": false, // blanks around lists
+    "MD012": false, // multiple blank lines
+    "MD058": false  // blanks around tables
+  },
+  "ignores": ["previous-work.md"]
+}

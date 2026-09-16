@@ -35,13 +35,13 @@ echo ""
 
 for node in "${nodes[@]}"; do
     if [[ "$node" == "$TEST_NODE" ]]; then continue; fi
-    
+
     # Get TB4 IP
     tb4_ip=$(ssh "root@$node" "ip addr show ${TB4_IFACE1} 2>/dev/null | grep 'inet ' | awk '{print \$2}' | cut -d/ -f1" || echo "")
-    
+
     if [[ -n "$tb4_ip" ]]; then
         echo "Ping to $node ($tb4_ip):"
-        ssh "root@$TEST_NODE" "ping -c 10 -i 0.2 $tb4_ip" 2>/dev/null | tail -1
+        ssh "root@$TEST_NODE" "ping -c 10 -i 0.2 $tb4_ip" 2> /dev/null | tail -1
         echo ""
     fi
 done
@@ -49,26 +49,26 @@ done
 log_step "2. Ceph RADOS Benchmark"
 
 # Check if Ceph is installed
-if ! ssh "root@$TEST_NODE" "command -v rados" &>/dev/null; then
+if ! ssh "root@$TEST_NODE" "command -v rados" &> /dev/null; then
     log_warn "Ceph not installed, skipping RADOS benchmark"
 else
     # Check if pool exists
     pool="${CEPH_POOL_NAME:-cephtb4}"
-    if ssh "root@$TEST_NODE" "ceph osd pool ls | grep -q $pool" 2>/dev/null; then
-        
+    if ssh "root@$TEST_NODE" "ceph osd pool ls | grep -q $pool" 2> /dev/null; then
+
         echo "Running 10-second write test..."
         echo ""
         ssh "root@$TEST_NODE" "rados -p $pool bench 10 write --no-cleanup 2>&1 | grep -E '(Bandwidth|Average IOPS|Average Latency)'"
-        
+
         echo ""
         echo "Running 10-second read test..."
         echo ""
         ssh "root@$TEST_NODE" "rados -p $pool bench 10 seq 2>&1 | grep -E '(Bandwidth|Average IOPS|Average Latency)'"
-        
+
         echo ""
         echo "Cleaning up test objects..."
-        ssh "root@$TEST_NODE" "rados -p $pool cleanup" 2>/dev/null || true
-        
+        ssh "root@$TEST_NODE" "rados -p $pool cleanup" 2> /dev/null || true
+
     else
         log_warn "Pool '$pool' not found, skipping RADOS benchmark"
     fi
@@ -81,12 +81,12 @@ echo ""
 
 for node in "${nodes[@]}"; do
     if [[ "$node" == "$TEST_NODE" ]]; then continue; fi
-    
+
     tb4_ip=$(ssh "root@$node" "ip addr show ${TB4_IFACE1} 2>/dev/null | grep 'inet ' | awk '{print \$2}' | cut -d/ -f1" || echo "")
-    
+
     if [[ -n "$tb4_ip" ]]; then
         echo -n "  MTU to $node: "
-        if ssh "root@$TEST_NODE" "ping -c 1 -M do -s 65492 $tb4_ip" &>/dev/null; then
+        if ssh "root@$TEST_NODE" "ping -c 1 -M do -s 65492 $tb4_ip" &> /dev/null; then
             echo -e "${GREEN}PASS${NC} (65520 bytes)"
         else
             echo -e "${RED}FAIL${NC}"

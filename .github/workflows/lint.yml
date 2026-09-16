@@ -1,0 +1,48 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  shell:
+    name: Shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # scandir "." so configs/scripts/ is covered, not just scripts/
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: "."
+          severity: warning
+
+      - name: shfmt
+        run: docker run --rm -v "$PWD:/w" -w /w mvdan/shfmt:v3 -i 4 -sr -d .
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v24.2.0
+        with:
+          globs: "**/*.md"
+
+      - name: typos
+        uses: crate-ci/typos@v1.49.0
+
+      # --offline: repo-local paths only, no network flake
+      - name: Links
+        uses: lycheeverse/lychee-action@v2.9.0
+        with:
+          args: --offline --no-progress "**/*.md"
+          fail: true

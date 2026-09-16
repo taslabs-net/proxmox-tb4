@@ -1,0 +1,7 @@
+# Only repo-local paths are checked (--offline); external URLs are skipped.
+
+exclude = [
+  # docs/img/sdn-create-fabric.png arrives with PR #20.
+  # Drop this exclusion once that merges.
+  "sdn-create-fabric\\.png",
+]

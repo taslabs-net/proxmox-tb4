@@ -37,7 +37,7 @@ load_config() {
     local script_dir
     script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local config_file="${script_dir}/../../config.env"
-    
+
     if [[ -f "$config_file" ]]; then
         # shellcheck source=/dev/null
         source "$config_file"
@@ -62,7 +62,7 @@ get_node_names() {
 # Check if we can SSH to a node
 check_ssh() {
     local host="$1"
-    ssh -o ConnectTimeout=5 -o BatchMode=yes "root@$host" "echo ok" &>/dev/null
+    ssh -o ConnectTimeout=5 -o BatchMode=yes "root@$host" "echo ok" &> /dev/null
 }
 
 # Run command on all nodes
@@ -70,7 +70,7 @@ run_on_all_nodes() {
     local cmd="$1"
     local nodes
     read -ra nodes <<< "$(get_node_ips)"
-    
+
     for node in "${nodes[@]}"; do
         log_info "Running on $node..."
         ssh "root@$node" "$cmd"
@@ -87,11 +87,11 @@ run_on_node() {
 # Ask for confirmation
 confirm() {
     local prompt="${1:-Continue?}"
-    
+
     if [[ "$INTERACTIVE" != "true" ]]; then
         return 0
     fi
-    
+
     echo ""
     read -p "$prompt [y/N] " -n 1 -r
     echo ""
@@ -111,14 +111,14 @@ check_user() {
 # Check prerequisites
 check_prereqs() {
     local missing=()
-    
+
     # Check for required commands
     for cmd in ssh ssh-keygen; do
-        if ! command -v "$cmd" &>/dev/null; then
+        if ! command -v "$cmd" &> /dev/null; then
             missing+=("$cmd")
         fi
     done
-    
+
     if [[ ${#missing[@]} -gt 0 ]]; then
         log_error "Missing required commands: ${missing[*]}"
         exit 1
@@ -128,7 +128,7 @@ check_prereqs() {
 # Dry run wrapper
 maybe_run() {
     local cmd="$1"
-    
+
     if [[ "$DRY_RUN" == "true" ]]; then
         log_info "[DRY RUN] Would execute: $cmd"
     else
@@ -142,7 +142,7 @@ backup_file() {
     local file="$2"
     local backup
     backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
-    
+
     run_on_node "$node" "cp '$file' '$backup' 2>/dev/null || true"
     log_info "Backed up $file to $backup"
 }
@@ -152,9 +152,9 @@ wait_for_node() {
     local node="$1"
     local timeout="${2:-120}"
     local elapsed=0
-    
+
     log_info "Waiting for $node to come back online..."
-    
+
     while [[ $elapsed -lt $timeout ]]; do
         if check_ssh "$node"; then
             log_success "$node is back online"
@@ -164,7 +164,7 @@ wait_for_node() {
         elapsed=$((elapsed + 5))
         echo -n "."
     done
-    
+
     echo ""
     log_error "Timeout waiting for $node"
     return 1

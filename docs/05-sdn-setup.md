@@ -29,6 +29,7 @@ Before starting:
 - TB4 interfaces configured and UP (from previous section)
 - Nodes can ping each other over point-to-point links
 - You have access to Proxmox web UI
+- There exists a Proxmox Cluster with all nodes added. You can use the vmbr0 interface for cluster communication, while the TB4 mesh will be used for Ceph traffic.
 
 ## GUI Configuration
 
@@ -42,9 +43,9 @@ Before starting:
    - **IPv6 Prefix:** (leave empty for IPv4-only)
    - **Hello Interval:** `3` (default)
    - **CSNP Interval:** `10` (default)
-4. **Click:** "OK"
+4. **Click:** "Create"
 
-![Create Fabric](../images/sdn-create-fabric.png)
+![Create Fabric](img/sdn-create-fabric.png)
 
 ### Step 2: Add Nodes to Fabric
 
@@ -53,18 +54,18 @@ Still in Fabrics view:
 1. **Select:** the `tb4` fabric
 2. **Click:** "Add Node"
 
-**For n2:**
-- **Node:** n2
+**For n1:**
+- **Node:** n1
 - **IPv4:** 10.100.0.12 (router ID)
 - **Interfaces:** Select `en05` and `en06`
 
-**For n3:**
-- **Node:** n3  
+**For n2:**
+- **Node:** n2
 - **IPv4:** 10.100.0.13
 - **Interfaces:** Select `en05` and `en06`
 
-**For n4:**
-- **Node:** n4
+**For n3:**
+- **Node:** n3
 - **IPv4:** 10.100.0.14
 - **Interfaces:** Select `en05` and `en06`
 
@@ -81,7 +82,7 @@ Still in Fabrics view:
 OpenFabric requires FRR (Free Range Routing):
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     ssh $node "systemctl start frr"
     ssh $node "systemctl enable frr"
 done
@@ -90,15 +91,15 @@ done
 **Verify FRR is running:**
 
 ```bash
-for node in n2 n3 n4; do
+for node in n1 n2 n3; do
     echo "=== FRR on $node ==="
     ssh $node "systemctl status frr | grep Active"
 done
 ```
 
 Expected:
-```
-=== FRR on n2 ===
+```text
+=== FRR on n1 ===
      Active: active (running) since ...
 ```
 
@@ -119,13 +120,13 @@ pvesh create /cluster/sdn/fabrics \
 ### Add Nodes
 
 ```bash
-# Add n2
+# Add n1
 pvesh create /cluster/sdn/fabrics/tb4/nodes \
-    --node n2 \
+    --node n1 \
     --ipv4 10.100.0.12 \
     --interfaces en05,en06
 
-# Repeat for n3 and n4
+# Repeat for n2 and n3
 ```
 
 ### Apply Configuration
@@ -148,8 +149,7 @@ done
 ```
 
 **Expected:**
-```
-=== Ping 10.100.0.12 ===
+```text=== Ping 10.100.0.12 ===
 64 bytes from 10.100.0.12: icmp_seq=1 ttl=64 time=0.618 ms
 64 bytes from 10.100.0.12: icmp_seq=2 ttl=64 time=0.582 ms
 ```
@@ -161,7 +161,7 @@ Key metrics:
 ### Check FRR Routing Table
 
 ```bash
-ssh n2 "vtysh -c 'show ip route'"
+ssh n1 "vtysh -c 'show ip route'"
 ```
 
 You should see routes to all router IDs via the TB4 interfaces.
@@ -169,27 +169,26 @@ You should see routes to all router IDs via the TB4 interfaces.
 ### Check OpenFabric Neighbors
 
 ```bash
-ssh n2 "vtysh -c 'show openfabric neighbor'"
+ssh n1 "vtysh -c 'show openfabric neighbor'"
 ```
 
-Should show n3 and n4 as neighbors.
+Should show n2 and n3 as neighbors.
 
 ## Static Routes Alternative
 
 If you don't want SDN/OpenFabric, use static routes:
 
-### On n2:
+### On n1:
 ```bash
-ssh n2 "ip route add 10.100.0.13/32 via 10.100.0.1 dev en05"  # to n3
-ssh n2 "ip route add 10.100.0.14/32 via 10.100.0.6 dev en06"  # to n4
+ssh n1 "ip route add 10.100.0.13/32 via 10.100.0.1 dev en05"  # to n2
+ssh n1 "ip route add 10.100.0.14/32 via 10.100.0.6 dev en06"  # to n3
 ```
 
 ### Make Persistent
 
 Add to `/etc/network/interfaces`:
 
-```
-up ip route add 10.100.0.13/32 via 10.100.0.1 dev en05
+```textup ip route add 10.100.0.13/32 via 10.100.0.1 dev en05
 up ip route add 10.100.0.14/32 via 10.100.0.6 dev en06
 ```
 
@@ -208,17 +207,17 @@ up ip route add 10.100.0.14/32 via 10.100.0.6 dev en06
 
 ```bash
 # Check logs
-ssh n2 "journalctl -u frr -n 50"
+ssh n1 "journalctl -u frr -n 50"
 
 # Check configuration
-ssh n2 "cat /etc/frr/frr.conf"
+ssh n1 "cat /etc/frr/frr.conf"
 ```
 
 ### No Neighbors Detected
 
 1. Verify interfaces are UP:
    ```bash
-   ssh n2 "ip link show en05 en06"
+   ssh n1 "ip link show en05 en06"
    ```
 
 2. Check IP addressing:

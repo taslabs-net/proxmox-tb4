@@ -7,7 +7,7 @@ LOGFILE="/tmp/udev-debug.log"
 echo "$(date): en05 bringup triggered" >> "$LOGFILE"
 
 for i in {1..5}; do
-    if ip link set en05 up mtu 65520 2>/dev/null; then
+    if ip link set en05 up mtu 65520 2> /dev/null; then
         echo "$(date): en05 up successful on attempt $i" >> "$LOGFILE"
         break
     else

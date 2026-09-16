@@ -13,7 +13,7 @@ load_config
 log_step "Checking local prerequisites"
 
 # Check SSH available
-if command -v ssh &>/dev/null; then
+if command -v ssh &> /dev/null; then
     log_success "SSH client available"
 else
     log_error "SSH client not found"
@@ -45,9 +45,9 @@ all_reachable=true
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo -n "Testing $name ($node)... "
-    
+
     if check_ssh "$node"; then
         echo -e "${GREEN}OK${NC}"
     else
@@ -69,7 +69,7 @@ log_step "Checking Proxmox versions"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     if check_ssh "$node"; then
         version=$(ssh "root@$node" "pveversion 2>/dev/null | head -1" || echo "unknown")
         if [[ "$version" == *"pve-manager/9"* ]]; then
@@ -88,9 +88,9 @@ log_step "Checking Thunderbolt 4 hardware"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     if check_ssh "$node"; then
-        tb4_count=$(ssh "root@$node" "lspci | grep -ci thunderbolt" 2>/dev/null || echo "0")
+        tb4_count=$(ssh "root@$node" "lspci | grep -ci thunderbolt" 2> /dev/null || echo "0")
         if [[ "$tb4_count" -gt 0 ]]; then
             log_success "$name: $tb4_count TB4 controller(s) detected"
         else

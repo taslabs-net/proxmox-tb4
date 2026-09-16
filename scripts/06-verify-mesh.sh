@@ -17,14 +17,14 @@ log_step "Step 1: Interface Status"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo ""
     log_info "=== $name ($node) ==="
-    
+
     # Check interface status
     for iface in ${TB4_IFACE1} ${TB4_IFACE2}; do
         status=$(ssh "root@$node" "ip link show $iface 2>/dev/null | head -1" || echo "NOT FOUND")
-        
+
         if echo "$status" | grep -q "UP"; then
             if echo "$status" | grep -q "LOWER_UP"; then
                 echo -e "  $iface: ${GREEN}UP (link detected)${NC}"
@@ -37,12 +37,12 @@ for i in "${!nodes[@]}"; do
             echo -e "  $iface: ${RED}NOT FOUND${NC}"
         fi
     done
-    
+
     # Show IPs
     echo "  IPs:"
     ssh "root@$node" "ip addr show ${TB4_IFACE1} 2>/dev/null | grep 'inet ' | awk '{print \"    ${TB4_IFACE1}: \" \$2}'" || echo "    ${TB4_IFACE1}: no IP"
     ssh "root@$node" "ip addr show ${TB4_IFACE2} 2>/dev/null | grep 'inet ' | awk '{print \"    ${TB4_IFACE2}: \" \$2}'" || echo "    ${TB4_IFACE2}: no IP"
-    
+
     # Show MTU
     echo "  MTU:"
     ssh "root@$node" "ip link show ${TB4_IFACE1} 2>/dev/null | grep -o 'mtu [0-9]*' | head -1 | sed 's/^/    ${TB4_IFACE1}: /'" || true
@@ -64,9 +64,9 @@ connections["$NODE2_NAME-$NODE3_NAME"]="$NODE2_MGMT_IP:$NODE3_TB4_EN06_IP"
 all_ok=true
 for link in "${!connections[@]}"; do
     IFS=':' read -r source_ip target_ip <<< "${connections[$link]}"
-    
+
     echo -n "  $link: "
-    if ssh "root@$source_ip" "ping -c 1 -W 2 $target_ip" &>/dev/null; then
+    if ssh "root@$source_ip" "ping -c 1 -W 2 $target_ip" &> /dev/null; then
         latency=$(ssh "root@$source_ip" "ping -c 1 $target_ip 2>/dev/null | grep 'time=' | sed 's/.*time=//'" || echo "?")
         echo -e "${GREEN}OK${NC} (${latency})"
     else
@@ -87,10 +87,10 @@ router_names=("$NODE1_NAME" "$NODE2_NAME" "$NODE3_NAME")
 for i in "${!router_ids[@]}"; do
     rid="${router_ids[$i]}"
     rname="${router_names[$i]}"
-    
+
     echo -n "  $rname ($rid): "
-    if ping -c 1 -W 2 "$rid" &>/dev/null; then
-        latency=$(ping -c 1 "$rid" 2>/dev/null | grep 'time=' | sed 's/.*time=//' || echo "?")
+    if ping -c 1 -W 2 "$rid" &> /dev/null; then
+        latency=$(ping -c 1 "$rid" 2> /dev/null | grep 'time=' | sed 's/.*time=//' || echo "?")
         echo -e "${GREEN}OK${NC} (${latency})"
     else
         echo -e "${YELLOW}UNREACHABLE${NC} (OpenFabric may not be configured yet)"
@@ -106,14 +106,14 @@ echo ""
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     if [[ $i -eq 0 ]]; then
-        continue  # Skip first node (we'll ping from here)
+        continue # Skip first node (we'll ping from here)
     fi
-    
+
     # Get a TB4 IP from this node
     target_ip=$(ssh "root@$node" "ip addr show ${TB4_IFACE1} 2>/dev/null | grep 'inet ' | awk '{print \$2}' | cut -d/ -f1")
-    
+
     if [[ -n "$target_ip" ]]; then
         echo -n "  ${NODE1_NAME} -> $name ($target_ip): "
         result=$(ssh "root@$NODE1_MGMT_IP" "ping -c 10 -i 0.2 $target_ip 2>/dev/null | tail -1")
@@ -132,7 +132,7 @@ target_ip="$NODE2_TB4_EN05_IP"
 echo -n "  ${NODE1_NAME} -> ${NODE2_NAME}: "
 
 # 65520 MTU - 20 IP header - 8 ICMP header = 65492 payload
-if ssh "root@$NODE1_MGMT_IP" "ping -c 1 -M do -s 65492 $target_ip" &>/dev/null; then
+if ssh "root@$NODE1_MGMT_IP" "ping -c 1 -M do -s 65492 $target_ip" &> /dev/null; then
     echo -e "${GREEN}PASS${NC} (65520 MTU working)"
 else
     echo -e "${RED}FAIL${NC} (MTU may not be configured correctly)"

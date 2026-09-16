@@ -28,10 +28,10 @@ if [[ -n "$KEY_PATH" ]]; then
     PUB_KEY_PATH="${KEY_PATH}.pub"
 else
     log_info "No SSH key found. Generating new ed25519 key..."
-    
+
     KEY_PATH="$HOME/.ssh/id_ed25519"
     PUB_KEY_PATH="${KEY_PATH}.pub"
-    
+
     if confirm "Generate new SSH key?"; then
         ssh-keygen -t ed25519 -C "$SSH_KEY_COMMENT" -f "$KEY_PATH" -N ""
         log_success "Generated new SSH key: $KEY_PATH"
@@ -62,13 +62,13 @@ echo ""
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     # Check if already in known_hosts
-    if ssh-keygen -F "$node" &>/dev/null; then
+    if ssh-keygen -F "$node" &> /dev/null; then
         log_success "$name ($node): Host key already known"
     else
         log_info "Connecting to $name ($node) to accept host key..."
-        if ssh -o StrictHostKeyChecking=accept-new "root@$node" "echo 'Host key accepted'" 2>/dev/null; then
+        if ssh -o StrictHostKeyChecking=accept-new "root@$node" "echo 'Host key accepted'" 2> /dev/null; then
             log_success "$name ($node): Host key accepted"
         else
             log_warn "$name ($node): Could not connect (will try key deployment anyway)"
@@ -81,25 +81,25 @@ log_step "Step 3: Deploy SSH Key"
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     log_info "Deploying key to $name ($node)..."
-    
+
     # Check if key already deployed
-    if ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$node" "echo ok" &>/dev/null; then
+    if ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$node" "echo ok" &> /dev/null; then
         log_success "$name ($node): Key already works"
         continue
     fi
-    
+
     # Try to deploy key
-    if command -v ssh-copy-id &>/dev/null; then
-        ssh-copy-id -i "$KEY_PATH" "root@$node" 2>/dev/null || {
+    if command -v ssh-copy-id &> /dev/null; then
+        ssh-copy-id -i "$KEY_PATH" "root@$node" 2> /dev/null || {
             log_warn "ssh-copy-id failed, trying manual method..."
             ssh "root@$node" "mkdir -p ~/.ssh && echo '$PUB_KEY' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
         }
     else
         ssh "root@$node" "mkdir -p ~/.ssh && echo '$PUB_KEY' >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
     fi
-    
+
     log_success "$name ($node): Key deployed"
 done
 
@@ -109,10 +109,10 @@ all_ok=true
 for i in "${!nodes[@]}"; do
     node="${nodes[$i]}"
     name="${names[$i]}"
-    
+
     echo -n "Testing $name ($node)... "
-    
-    if ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$node" "hostname" &>/dev/null; then
+
+    if ssh -o BatchMode=yes -o ConnectTimeout=5 "root@$node" "hostname" &> /dev/null; then
         hostname=$(ssh "root@$node" "hostname")
         echo -e "${GREEN}OK${NC} (hostname: $hostname)"
     else
