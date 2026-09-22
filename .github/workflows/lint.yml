@@ -1,13 +1,24 @@
 name: Lint
 
 on:
-  push:
-    branches: [main]
+  # ⛔ NO `push: branches: [main]`. Every commit reaches main through a pull request that
+  #   this same workflow already linted and that the branch ruleset required to be green
+  #   (`Shell` and `Docs`), so the post-merge run re-linted a tree it had just cleared.
+  #   Every push-event run in the 7 days to 2026-09-22 was on main, and every one of them
+  #   was the squash of a PR Lint had already passed.
   pull_request:
     branches: [main]
 
 permissions:
   contents: read
+
+# ★ WAS ABSENT, AND IT SHOWED. Runs 35670075774 and 35670080066 were both push/main, created
+#   THREE SECONDS APART on 2026-09-22T00:00, and BOTH ran to conclusion — neither superseded
+#   the other, so the repo paid twice for one answer. ci.yml in the private repos has carried
+#   this group for months; this file never got it.
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   shell:
