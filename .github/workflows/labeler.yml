@@ -11,6 +11,14 @@ permissions:
   contents: read
   pull-requests: write
 
+# ★ KEYED ON THE PR NUMBER, NOT github.ref. This workflow is `pull_request_target`, so
+#   github.ref is the BASE branch (refs/heads/main) for every open PR at once — grouping on
+#   it would make each PR's labeler cancel every other PR's. The PR number is the only key
+#   here that identifies one pull request.
+concurrency:
+  group: labeler-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   label:
     runs-on: ubuntu-latest
