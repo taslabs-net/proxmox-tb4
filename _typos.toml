@@ -1,0 +1,4 @@
+# typos: exclude encoded diagram assets. drawio SVGs embed compressed XML and random
+# diagram ids (e.g. "...R2ND55buw" read as a misspelled "AND"); they hold no prose.
+[files]
+extend-exclude = ["*.drawio.svg"]
