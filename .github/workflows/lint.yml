@@ -38,7 +38,7 @@ jobs:
           globs: "**/*.md"
 
       - name: typos
-        uses: crate-ci/typos@v1.49.0
+        uses: crate-ci/typos@v1.50.2
 
       # --offline: repo-local paths only, no network flake
       - name: Links
